@@ -6,7 +6,7 @@
  */ 
 
 #include <avr/io.h>
-#define F_CPU 16000000UL
+#define F_CPU 8000000UL
 #include <util/delay.h>
 
 char bin_to_7seg(uint8_t input);
@@ -63,8 +63,7 @@ char check_for_toggle(unsigned char mode_updown){
 			{
 				return 1;
 			}
-			}
-	}
+
 }
 
 uint8_t check_for_reset(uint8_t data_value){

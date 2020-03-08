@@ -28,9 +28,9 @@ void display_result_nagative(char result){
 
 int main(){
 
-	DDRD = 0xFF;  // Defind PORTD to be output
-	DDRB = 0x00;  // Defind PORTB to be input
-	DDRC = 0x00;  // Defind PORTC to be input
+	DDRD = 0xFF;  // DefinePORTD to be output
+	DDRB = 0x00;  // Define PORTB to be input
+	DDRC = 0x00;  // Define PORTC to be input
 
 	unsigned char inputFromPinB; // variable to store 8 bit input value from PINB
 	unsigned char inputFromPinC; // variable to store 8 bit input value from PINC

@@ -21,11 +21,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_frame  00000064  00000000  00000000  00001624  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000400  00000000  00000000  00001688  2**0
+  9 .debug_str    0000042a  00000000  00000000  00001688  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000020a  00000000  00000000  00001a88  2**0
+ 10 .debug_loc    00000216  00000000  00000000  00001ab2  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000030  00000000  00000000  00001c92  2**0
+ 11 .debug_ranges 00000030  00000000  00000000  00001cc8  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -99,8 +99,8 @@ char check_for_toggle(unsigned char mode_updown){
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  9a:	ef e3       	ldi	r30, 0x3F	; 63
-  9c:	fc e9       	ldi	r31, 0x9C	; 156
+  9a:	ef e1       	ldi	r30, 0x1F	; 31
+  9c:	fe e4       	ldi	r31, 0x4E	; 78
   9e:	31 97       	sbiw	r30, 0x01	; 1
   a0:	f1 f7       	brne	.-4      	; 0x9e <check_for_toggle+0x8>
   a2:	00 c0       	rjmp	.+0      	; 0xa4 <check_for_toggle+0xe>
@@ -132,13 +132,13 @@ uint8_t check_for_reset(uint8_t data_value){
 	unsigned char check_button;
 	check_button = PIND;
 	check_button &= 0b00000100;
-	check_button = check_button << 1;
+	check_button = check_button >> 2;
 	if(check_button == 0){
   b8:	4a 99       	sbic	0x09, 2	; 9
   ba:	03 c0       	rjmp	.+6      	; 0xc2 <check_for_reset+0xa>
 		check_button = PIND;
 		check_button &= 0b00000100;
-		check_button = check_button << 1;
+		check_button = check_button >> 2;
 		if(check_button == 0){
   bc:	4a 9b       	sbis	0x09, 2	; 9
   be:	02 c0       	rjmp	.+4      	; 0xc4 <check_for_reset+0xc>
@@ -153,7 +153,7 @@ uint8_t check_for_reset(uint8_t data_value){
 	if(check_button == 0){
 		check_button = PIND;
 		check_button &= 0b00000100;
-		check_button = check_button << 1;
+		check_button = check_button >> 2;
 		if(check_button == 0){
 			return 0;
   c4:	80 e0       	ldi	r24, 0x00	; 0
@@ -235,8 +235,10 @@ uint8_t run_number(uint8_t number,unsigned char mode_updown){
 	DDRD =  0x01; //0b00000001
   ee:	81 e0       	ldi	r24, 0x01	; 1
   f0:	8a b9       	out	0x0a, r24	; 10
-    uint8_t out_value = 0;
-  f2:	80 e0       	ldi	r24, 0x00	; 0
+    uint8_t out_value = 1;
+	unsigned char out_led,temp,mode_updown;
+	mode_updown = 0;
+  f2:	c0 e0       	ldi	r28, 0x00	; 0
 	while (1) 
     {
 		temp = 0x01;
@@ -255,7 +257,7 @@ uint8_t run_number(uint8_t number,unsigned char mode_updown){
   fa:	e0 50       	subi	r30, 0x00	; 0
   fc:	ff 4f       	sbci	r31, 0xFF	; 255
   fe:	90 81       	ld	r25, Z
-	unsigned char out_led,temp,mode_updown;
+	mode_updown = 0;
 	while (1) 
     {
 		temp = 0x01;
@@ -265,8 +267,8 @@ uint8_t run_number(uint8_t number,unsigned char mode_updown){
 		PORTD = temp;
  102:	1b b9       	out	0x0b, r17	; 11
  104:	2f ef       	ldi	r18, 0xFF	; 255
- 106:	33 ed       	ldi	r19, 0xD3	; 211
- 108:	90 e3       	ldi	r25, 0x30	; 48
+ 106:	39 e6       	ldi	r19, 0x69	; 105
+ 108:	98 e1       	ldi	r25, 0x18	; 24
  10a:	21 50       	subi	r18, 0x01	; 1
  10c:	30 40       	sbci	r19, 0x00	; 0
  10e:	90 40       	sbci	r25, 0x00	; 0

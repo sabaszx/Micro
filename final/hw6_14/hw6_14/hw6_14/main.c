@@ -63,7 +63,7 @@ int main(void)
 		{
 			//count lower
 			if(c01 <=0 ){
-				//??????
+				//borrow
 				if (c10 <= 0)
 				{
 					if(sw1 > 9){
@@ -95,7 +95,7 @@ int main(void)
 				}
 			
 			}
-			//??????????
+			//not borrow
 			else{
 				c01--;
 			}
