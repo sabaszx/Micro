@@ -1,91 +1,70 @@
-/*
- * hw7_6.c
- *
- * Created: 7/3/2563 0:59:58
- * Author : lenovo
- */ 
-#define  F_CPU 8000000UL
-#define INC 0
-#define DEC 1
-#define NOTHING 2
-#include <util/delay.h>
+#define F_CPU 8000000UL
 #include <avr/io.h>
+#include <util/delay.h>
 
-unsigned char tb7seg[] = {0b00111111, 0b00000110,0b01011011, 0b01001111,
-	0b01100110, 0b01101101,0b01111101, 0b00000111,
-	0b01111111, 0b01101111,0b01110111, 0b01111100,
-	0b00111001, 0b01011110,0b01111001, 0b01110001}; //declare as global variable
-	
-void initDirection(void)
+void initPort(void)
 {
-	DDRC = 0x3f;
-	DDRD = 0xf9;
-}	
-void dispLed(unsigned char a)
-{
-	unsigned char tmp;
-	tmp = tb7seg[a];
-	PORTC = tmp;
-	tmp = tmp >> 6;
-	tmp &= 0x01;
-	if (tmp)
-		PORTD |= 0x01;
-	else
-		PORTD &= 0xfe;
+	DDRC = 0xff;
+	DDRD = 0x01;
 }
-/*------logic status---- as below
-sw: 12   | details
-	-----------------
-	00 --> press both
-	01 --> press sw2
-	10 --> press sw1
-	11 --> press neither
-*/
-unsigned char readSW(void)
-{
-	unsigned char sw,returnTocaller;
-	sw = PIND >> 1;
-	sw &= 0x03; //0000 0011 ===> used only 2 bits
-	if(sw != 3)
-	{
-		if (sw == 1) //if press only sw2
-		{
-			returnTocaller = DEC; //store status that press sw2 to decrement
-		}
-		else if(sw == 2) //if press only sw1
-		{
-			returnTocaller = INC; //store status that press sw2 to increment
-		}
-		else //in case of press neither
-			returnTocaller = NOTHING;
-		do
-		{
-			sw = PIND >> 1; //shift right 1
-			sw &= 0x03; //0000 0011 use only 2 bits
-		} while (sw != 3);
-	}
-	else
-		return NOTHING;
-	return NOTHING;	
-}
-
-void counterUpper(unsigned char rec)
-{
-	
-}
-
-void counterLower(unsigned char rec)
-{
-	
-}
-
 int main(void)
 {
-	initDirection()
-	unsigned char sw;
-	while(1)
+	unsigned char LOOKUPTB[] = { 0x3F,
+		0x06,
+		0x5B,
+		0x4F,
+		0x66,
+		0x6D,
+		0x7D,
+		0x07,
+		0x7F,
+		0x6F,
+		0x77,
+		0x7C,
+		0x39,
+		0x5E,
+		0x79,
+		0x71 };
+	
+	unsigned char sw1, sw2, result, display, status;
+	result = 0;
+	status = 0;
+	initPort();
+	while (1)
 	{
-		sw = readSW();
-				
+		sw1 = PIND;
+		sw1 &= 0x02;
+		sw2 = PIND;
+		sw2 &= 0x04;
+		
+		if (sw2 == 0) {
+			status = ~status;
+			_delay_ms(1000);
+		}
+		if(status == 0){
+			if(result == 15){
+				result =0;
+			}
+			else{
+				result++;
+			}
+		}
+		else{
+			if(result == 0){
+				result=15;
+			}
+			else{
+				result--;
+			}
+		}
+		if (sw1 == 0){
+			result = 0;
+		}
+		display = LOOKUPTB[result];
+		PORTC = display;
+		display &=0x40;
+		display = display >>6;
+		PORTD = display;
+		_delay_ms(1000);
 	}
 }
